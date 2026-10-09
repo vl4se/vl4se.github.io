@@ -1,615 +1,156 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-black select-none overflow-hidden">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>KTM 1390 TFT Dashboard</title>
-    
-    <style>
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            position: fixed;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            background-color: #000000;
-            color: #f3f4f6;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            touch-action: manipulation;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .ktm-orange-text { color: #ff6600; }
-        .ktm-orange-bg { background-color: #ff6600; }
-        .ktm-orange-border { border-color: #ff6600; }
-        .ktm-cyan-text { color: #00d8ff; }
-        .ktm-cyan-bg { background-color: #00d8ff; }
-
-        .font-mono-num {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-
-        /* TFT Display Glare / Scanline Layer */
-        .tft-scanlines {
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-        }
-
-        .dash-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            padding: 8px;
-            gap: 8px;
-        }
-
-        .dash-panel {
-            background-color: #09090b;
-            border: 2px solid #27272a;
-            border-radius: 16px;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            flex: 1;
-            overflow: hidden;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8);
-        }
-
-        .header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: rgba(24, 24, 27, 0.9);
-            border-bottom: 1px solid #27272a;
-            padding: 6px 12px;
-            border-radius: 10px 10px 0 0;
-            font-size: 11px;
-            letter-spacing: 0.05em;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            border-radius: 6px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: transform 0.1s ease, opacity 0.1s ease;
-            text-transform: uppercase;
-        }
-        .btn:active {
-            transform: scale(0.95);
-            opacity: 0.85;
-        }
-
-        .btn-orange {
-            background-color: #ff6600;
-            color: #000000;
-            box-shadow: 0 0 12px rgba(255, 102, 0, 0.35);
-        }
-
-        .btn-dark {
-            background-color: #27272a;
-            color: #e4e4e7;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            background-color: rgba(24, 24, 27, 0.9);
-            border: 1px solid #27272a;
-            padding: 8px;
-            border-radius: 12px;
-        }
-
-        .stat-card {
-            background-color: #09090b;
-            border-left: 3px solid #ff6600;
-            padding: 6px 8px;
-            border-radius: 0 6px 6px 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .stat-card-cyan {
-            border-left-color: #00d8ff;
-        }
-
-        .stat-card-gray {
-            border-left-color: #52525b;
-        }
-
-        /* SVG Icon styling */
-        .icon-svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        /* Modal Backdrop */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 100;
-            background-color: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-
-        .modal-box {
-            background-color: #18181b;
-            border: 2px solid #3f3f46;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 400px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .hidden { display: none !important; }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KTM 1290 Dash</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bezel:#000;--screen:#16263f;--panel:#b9bcbd;--ink:#1c3354;--white:#fff;--red:#d8334a;--yel:#e8c21a;--logo:#3f6fa3;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%;margin:0;background:var(--screen);overflow:hidden;-webkit-user-select:none;user-select:none}
+#stage{position:absolute;left:50%;top:50%;width:667px;height:375px;background:var(--screen);overflow:hidden;transform-origin:center}
+svg{width:667px;height:375px;display:block;font-family:'Rajdhani','Arial Narrow',sans-serif;font-weight:600}
+text{fill:var(--ink)}
+</style>
 </head>
 <body>
+<div id="stage">
+<svg viewBox="0 0 667 375" xmlns="http://www.w3.org/2000/svg">
+  <!-- светлая панель -->
+  <path d="M26,338 L26,214 Q26,190 44,174 L128,88 Q146,70 172,70 L641,70 L641,338 Z" fill="var(--panel)"/>
+  <!-- тахометр -->
+  <path id="track" fill="none" stroke="#000" stroke-width="2.5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
+  <path id="redTrack" fill="none" stroke="var(--red)" stroke-width="2.5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
+  <path id="lit" fill="none" stroke="#000" stroke-width="5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
+  <path id="litRed" fill="none" stroke="var(--red)" stroke-width="5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
+  <g id="labels" font-size="22" text-anchor="middle"></g>
+  <text x="636" y="116" font-size="11" text-anchor="end">x10 km/h</text>
 
-    <div class="tft-scanlines absolute inset-0 z-40"></div>
+  <!-- передача -->
+  <text x="26" y="104" font-size="104" font-weight="700" style="fill:var(--white)">3</text>
+  <text id="clock" x="100" y="62" font-size="22" style="fill:var(--white)">--:--</text>
 
-    <div id="start-overlay" class="modal-overlay">
-        <div class="modal-box text-center">
-            <div style="font-size: 32px; font-weight: 900; color: #ff6600; font-style: italic; border-bottom: 2px solid #ff6600; padding-bottom: 4px; display: inline-block; margin: 0 auto;">
-                KTM TFT
-            </div>
-            <h2 style="font-size: 18px; font-weight: 700; color: #ffffff;">START DASHBOARD</h2>
-            <p style="font-size: 12px; color: #a1a1aa; line-height: 1.4;">
-                Tap below to grant GPS Location & WakeLock permissions for real-time speed tracking on iOS Safari.
-            </p>
-            <button id="btn-start-app" class="btn btn-orange" style="padding: 14px; font-size: 14px; width: 100%; border-radius: 10px;">
-                LAUNCH & ENABLE GPS
-            </button>
-        </div>
-    </div>
 
-    <div class="dash-container">
-        <div id="main-panel" class="dash-panel">
-            
-            <!-- HEADER BAR -->
-            <header class="header-bar">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <button id="theme-badge" onclick="toggleThemeMode()" class="btn btn-orange" style="padding: 2px 6px; font-size: 9px;">
-                        TRACK
-                    </button>
-                    <div style="display: flex; align-items: center; color: #d4d4d8;" class="font-mono-num">
-                        <span id="clock" style="font-weight: 700; font-size: 13px;">12:00</span>
-                    </div>
-                </div>
+  <!-- скорость -->
+  <text id="spd" x="618" y="262" font-size="140" font-weight="700" text-anchor="end">0</text>
+  <g id="noGps" transform="translate(528,160)" visibility="hidden">
+    <rect x="4" y="4" width="92" height="104" rx="20" fill="none" stroke="var(--ink)" stroke-width="9"/>
+    <line x1="22" y1="96" x2="78" y2="16" stroke="var(--ink)" stroke-width="9"/>
+  </g>
+  <text x="618" y="288" font-size="18" text-anchor="end">km/h</text>
 
-                <div style="font-size: 22px; font-weight: 900; font-style: italic; color: #ff6600; border-bottom: 2px solid #ff6600; padding: 0 8px; line-height: 1;">
-                    KTM
-                </div>
+  <!-- нижняя строка -->
+  <rect x="76" y="304" width="104" height="30" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
+  <text x="128" y="328" font-size="24" text-anchor="middle" letter-spacing="1">TRACK</text>
+  <line x1="204" y1="306" x2="204" y2="334" stroke="var(--red)" stroke-width="2"/>
+  <text x="328" y="328" font-size="26" text-anchor="middle">ABS <tspan font-weight="700">OFF</tspan></text>
+  <line x1="450" y1="306" x2="450" y2="334" stroke="var(--red)" stroke-width="2"/>
+  <g id="oilBtn" style="cursor:pointer">
+    <rect x="456" y="300" width="180" height="38" fill="transparent"/>
+    <text x="472" y="326" font-size="16">TEMP</text>
+    <text id="oil" x="526" y="328" font-size="28" font-weight="700">--°C</text>
+  </g>
 
-                <div style="display: flex; align-items: center; gap: 8px; font-size: 10px;" class="font-mono-num">
-                    <div style="display: flex; align-items: center; gap: 3px;">
-                        <svg class="icon-svg" id="gps-icon" style="fill: #71717a;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/><circle cx="12" cy="12" r="5"/></svg>
-                        <span id="gps-status" style="color: #71717a;">OFF</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 2px;">
-                        <span id="battery-level" style="color: #a1a1aa;">--%</span>
-                    </div>
-                </div>
-            </header>
+  <!-- лого -->
+  <text x="333" y="365" font-size="26" font-weight="700" text-anchor="middle" letter-spacing="3" style="fill:var(--logo);font-style:italic">KTM</text>
+</svg>
+</div>
 
-            <!-- TACHOMETER & SPEEDOMETER CENTER -->
-            <main style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative;">
-                
-                <div style="width: 100%; max-width: 480px; height: 130px; position: relative; display: flex; align-items: center; justify-content: center;">
-                    <svg viewBox="0 0 400 130" style="width: 100%; height: 100%;">
-                        <defs>
-                            <linearGradient id="ktm-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#00d8ff" />
-                                <stop offset="50%" stop-color="#ff6600" />
-                                <stop offset="100%" stop-color="#ef4444" />
-                            </linearGradient>
-                        </defs>
-                        <!-- Background Segment Arc -->
-                        <path d="M 30 110 A 170 170 0 0 1 370 110" fill="none" stroke="#27272a" stroke-width="14" stroke-dasharray="8 4" />
-                        <!-- Dynamic Progress Arc -->
-                        <path id="tacho-arc" d="M 30 110 A 170 170 0 0 1 370 110" fill="none" stroke="url(#ktm-grad)" stroke-width="14" stroke-dasharray="0 600" />
-                        <!-- Scale Numbers -->
-                        <text x="35" y="126" fill="#71717a" font-size="10" font-weight="bold" text-anchor="middle">0</text>
-                        <text x="110" y="55" fill="#71717a" font-size="10" font-weight="bold" text-anchor="middle">15</text>
-                        <text x="200" y="26" fill="#71717a" font-size="10" font-weight="bold" text-anchor="middle">30</text>
-                        <text x="290" y="55" fill="#71717a" font-size="10" font-weight="bold" text-anchor="middle">45</text>
-                        <text x="365" y="126" fill="#ef4444" font-size="10" font-weight="bold" text-anchor="middle">60+</text>
-                    </svg>
+<script>
+(function(){
+  var MAX = 60, RED = 35;           // км/ч: полная шкала и начало красной зоны
+  var $ = function(i){return document.getElementById(i)};
 
-                    <!-- Speed Display Readout -->
-                    <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-top: 8px;">
-                        <div style="display: flex; align-items: baseline; gap: 4px;">
-                            <span id="speed-display" style="font-size: 84px; font-weight: 900; line-height: 1; color: #ffffff;" class="font-mono-num">0</span>
-                            <span id="unit-label" class="ktm-orange-text" style="font-weight: 800; font-size: 18px;">KM/H</span>
-                        </div>
-                    </div>
-                </div>
+  /* масштаб под iPhone 7 (667x375), в портрете — поворот */
+  function fit(){
+    var W=innerWidth,H=innerHeight,p=H>W,aw=p?H:W,ah=p?W:H,s=Math.min(aw/667,ah/375);
+    $('stage').style.transform='translate(-50%,-50%)'+(p?' rotate(90deg)':'')+' scale('+s+')';
+  }
+  addEventListener('resize',fit); fit();
 
-                <!-- Secondary Telemetry Badges -->
-                <div style="display: flex; gap: 8px; margin-top: 4px;">
-                    <div style="background-color: rgba(24, 24, 27, 0.9); border: 1px solid #27272a; padding: 4px 10px; border-radius: 8px; text-align: center; min-width: 80px;">
-                        <span style="font-size: 8px; color: #71717a; text-transform: uppercase; display: block; font-weight: 700;">Max Speed</span>
-                        <span id="max-speed" style="font-size: 13px; font-weight: 700; color: #f4f4f5;" class="font-mono-num">0.0</span>
-                        <span class="unit-sub" style="font-size: 8px; color: #71717a;">km/h</span>
-                    </div>
-                    <div style="background-color: rgba(24, 24, 27, 0.9); border: 1px solid #27272a; padding: 4px 10px; border-radius: 8px; text-align: center; min-width: 80px;">
-                        <span style="font-size: 8px; color: #71717a; text-transform: uppercase; display: block; font-weight: 700;">Avg Speed</span>
-                        <span id="avg-speed" style="font-size: 13px; font-weight: 700; color: #f4f4f5;" class="font-mono-num">0.0</span>
-                        <span class="unit-sub" style="font-size: 8px; color: #71717a;">km/h</span>
-                    </div>
-                    <div style="background-color: rgba(24, 24, 27, 0.9); border: 1px solid #27272a; padding: 4px 10px; border-radius: 8px; text-align: center; min-width: 80px;">
-                        <span style="font-size: 8px; color: #71717a; text-transform: uppercase; display: block; font-weight: 700;">GPS Acc</span>
-                        <span id="gps-acc" class="ktm-orange-text font-mono-num" style="font-size: 13px; font-weight: 700;">--</span>
-                        <span style="font-size: 8px; color: #71717a;">m</span>
-                    </div>
-                </div>
-            </main>
+  /* шкала тахометра */
+  var lit=$('lit'),litRed=$('litRed'),redTrack=$('redTrack'),track=$('track');
+  var L=track.getTotalLength(), redStart=L*RED/MAX;
+  redTrack.style.strokeDasharray='0 '+redStart+' '+(L-redStart)+' '+L;
+  var g=$('labels');
+  for(var i=1;i<=6;i++){
+    var len=L*i/6, pt=track.getPointAtLength(Math.min(len,L-1));
+    var a=track.getPointAtLength(Math.max(len-2,0)), b=track.getPointAtLength(Math.min(len+2,L));
+    var dx=b.x-a.x, dy=b.y-a.y, m=Math.hypot(dx,dy)||1;
+    var nx=dy/m, ny=-dx/m, off=26;
+    var t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',Math.min(pt.x+nx*off,628)); t.setAttribute('y',pt.y+ny*off+8);
+    t.textContent=i; if(i*10>=RED) t.style.fill='var(--red)';
+    g.appendChild(t);
+  }
 
-            <!-- FOOTER TELEMETRY GRID -->
-            <footer class="footer-grid">
-                <div class="stat-card">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 8px; color: #71717a; font-weight: 700; text-transform: uppercase;">Distance</span>
-                        <button onclick="toggleTripTab()" id="trip-tab-btn" class="btn btn-dark" style="font-size: 8px; padding: 1px 4px; color: #ff6600;">TRIP A</button>
-                    </div>
-                    <div>
-                        <span id="trip-distance" style="font-size: 20px; font-weight: 700; color: #ffffff;" class="font-mono-num">0.00</span>
-                        <span class="unit-sub ktm-orange-text" style="font-size: 10px; font-weight: 700;">km</span>
-                    </div>
-                    <div style="font-size: 8px; color: #71717a;" class="font-mono-num">
-                        ODO: <span id="total-odo" style="color: #e4e4e7; font-weight: 700;">0.0</span> <span class="unit-sub">km</span>
-                    </div>
-                </div>
+  var target=0, shown=0;
+  function draw(){
+    shown += (target-shown)*0.18;
+    var v=Math.max(0,Math.min(shown,MAX)), len=L*v/MAX;
+    lit.style.strokeDasharray=Math.min(len,redStart)+' '+L;
+    litRed.style.strokeDasharray = len>redStart ? '0 '+redStart+' '+(len-redStart)+' '+L : '0 '+L;
+    requestAnimationFrame(draw);
+  }
+  draw();
 
-                <div class="stat-card stat-card-cyan">
-                    <span style="font-size: 8px; color: #71717a; font-weight: 700; text-transform: uppercase;">Duration</span>
-                    <div>
-                        <span id="ride-time" style="font-size: 18px; font-weight: 700; color: #ffffff;" class="font-mono-num">00:00:00</span>
-                    </div>
-                    <div id="ride-status" style="font-size: 8px; font-weight: 700; color: #ef4444;">STOPPED</div>
-                </div>
+  /* часы */
+  function tick(){var d=new Date();$('clock').textContent=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
+  tick(); setInterval(tick,5000);
 
-                <div class="stat-card stat-card-gray">
-                    <span style="font-size: 8px; color: #71717a; font-weight: 700; text-transform: uppercase;">Controls</span>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 2px;">
-                        <button id="btn-toggle-ride" onclick="toggleRide()" class="btn btn-orange" style="padding: 6px;">▶</button>
-                        <button onclick="saveCurrentRide()" class="btn btn-dark" style="padding: 6px; color: #00d8ff;">💾</button>
-                        <button onclick="resetActiveTrip()" class="btn btn-dark" style="padding: 4px; font-size: 8px;">RESET</button>
-                        <button onclick="openSettingsModal()" class="btn btn-dark" style="padding: 4px; font-size: 8px;">⚙️</button>
-                    </div>
-                </div>
-            </footer>
+  /* скорость */
+  function setSpeed(kmh){
+    if(kmh==null){ $('spd').style.visibility='hidden'; $('noGps').setAttribute('visibility','visible'); target=0; return; }
+    $('noGps').setAttribute('visibility','hidden'); $('spd').style.visibility='visible';
+    var v=kmh<2?0:Math.round(kmh);
+    $('spd').textContent=v; target=v;
+  }
+  setSpeed(null);
 
-        </div>
-    </div>
+  var last=null;
+  function hav(a,b,c,d){var R=6371000,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,
+    h=Math.sin(x/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
 
-    <div id="settings-modal" class="modal-overlay hidden">
-        <div class="modal-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3f3f46; padding-bottom: 8px;">
-                <h3 style="font-size: 14px; font-weight: 700; color: #ff6600;">DASHBOARD SETTINGS</h3>
-                <button onclick="closeSettingsModal()" class="btn btn-dark" style="padding: 4px 8px;">✕</button>
-            </div>
+  if(location.hash==='#demo'){
+    var t0=Date.now();
+    setInterval(function(){setSpeed(32+32*Math.sin((Date.now()-t0)/3500))},100);
+    getTemp(50.45,30.52);
+  } else if(navigator.geolocation){
+    navigator.geolocation.watchPosition(function(p){
+      var c=p.coords, v=c.speed;
+      if(v==null||isNaN(v)){
+        if(last){var dt=(p.timestamp-last.t)/1000; v=dt>0?hav(last.la,last.lo,c.latitude,c.longitude)/dt:0;} else v=0;
+      }
+      last={la:c.latitude,lo:c.longitude,t:p.timestamp};
+      setSpeed(v*3.6);
+      if(!tempAt||Date.now()-tempAt>900000) getTemp(c.latitude,c.longitude);
+    },function(){setSpeed(null)},{enableHighAccuracy:true,maximumAge:0,timeout:15000});
+  }
 
-            <div style="display: flex; flex-direction: column; gap: 12px; margin: 8px 0;">
-                <div>
-                    <label style="font-size: 10px; color: #a1a1aa; font-weight: 700; display: block; margin-bottom: 4px;">SPEED UNITS</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <button onclick="setUnits('km/h')" id="btn-unit-kmh" class="btn btn-orange" style="padding: 8px; font-size: 11px;">KM/H</button>
-                        <button onclick="setUnits('mph')" id="btn-unit-mph" class="btn btn-dark" style="padding: 8px; font-size: 11px;">MPH</button>
-                    </div>
-                </div>
+  /* температура масла = температура воздуха в городе (Open-Meteo) */
+  var tempAt=0, manual=false;
+  function showTemp(t){$('oil').textContent=Math.round(t)+'°C'}
+  function getTemp(la,lo){
+    tempAt=Date.now();
+    if(manual) return;
+    fetch('https://api.open-meteo.com/v1/forecast?latitude='+la+'&longitude='+lo+'&current=temperature_2m')
+      .then(function(r){return r.json()})
+      .then(function(j){showTemp(j.current.temperature_2m);try{localStorage.setItem('oil',j.current.temperature_2m)}catch(e){}})
+      .catch(function(){});
+  }
+  try{var s=localStorage.getItem('oil'); if(s!==null) showTemp(parseFloat(s));}catch(e){}
+  /* ручной ввод, если интернет/API недоступен: тап по OIL */
+  $('oilBtn').addEventListener('click',function(){
+    var v=prompt('Температура, °C:');
+    if(v===null||v.trim()==='') return;
+    var n=parseFloat(v.replace(',','.')); if(isNaN(n)) return;
+    manual=true; showTemp(n); try{localStorage.setItem('oil',n)}catch(e){}
+  });
 
-                <div style="display: flex; justify-content: space-between; align-items: center; background: #09090b; padding: 8px; border-radius: 8px;">
-                    <div>
-                        <div style="font-size: 11px; font-weight: 700; color: #f4f4f5;">Demo Mode</div>
-                        <div style="font-size: 9px; color: #71717a;">Simulate speed without moving</div>
-                    </div>
-                    <button id="btn-sim-toggle" onclick="toggleSimulation()" class="btn btn-dark" style="padding: 6px 12px; font-size: 10px;">OFF</button>
-                </div>
-
-                <div>
-                    <label style="font-size: 10px; color: #a1a1aa; font-weight: 700; display: block; margin-bottom: 4px;">SAVED RIDE LOGS</label>
-                    <div id="ride-history-list" style="max-height: 100px; overflow-y: auto; background: #09090b; border: 1px solid #27272a; border-radius: 8px; padding: 6px; font-size: 10px;" class="font-mono-num">
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="closeSettingsModal()" class="btn btn-orange" style="padding: 10px; font-size: 12px; width: 100%;">DONE</button>
-        </div>
-    </div>
-
-    <script>
-        const STORAGE_KEY = 'KTM_LOCAL_DASH_V3';
-
-        let appState = {
-            units: 'km/h',
-            theme: 'TRACK',
-            odoKm: 0.0,
-            tripA: { distKm: 0.0, timeSec: 0, maxSpeedKmh: 0.0 },
-            tripB: { distKm: 0.0, timeSec: 0, maxSpeedKmh: 0.0 },
-            activeTripTab: 'A',
-            rideLogs: []
-        };
-
-        let isRiding = false;
-        let isSimulating = false;
-        let watchId = null;
-        let currentSpeedKmh = 0.0;
-        let lastPosition = null;
-        let activeRideTimeSec = 0;
-        let timerInterval = null;
-        let simInterval = null;
-        let audioCtx = null;
-
-        function loadSavedState() {
-            try {
-                const saved = localStorage.getItem(STORAGE_KEY);
-                if (saved) {
-                    appState = { ...appState, ...JSON.parse(saved) };
-                }
-            } catch (e) {
-                console.warn('LocalStorage load error:', e);
-            }
-            renderUIFromState();
-        }
-
-        function saveState() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-            } catch (e) {
-                console.warn('LocalStorage save error:', e);
-            }
-        }
-
-        function renderUIFromState() {
-            const isKmh = appState.units === 'km/h';
-            const factor = isKmh ? 1.0 : 0.621371;
-            const unitSub = isKmh ? 'km' : 'mi';
-
-            document.getElementById('unit-label').innerText = isKmh ? 'KM/H' : 'MPH';
-            document.querySelectorAll('.unit-sub').forEach(el => el.innerText = unitSub);
-
-            document.getElementById('total-odo').innerText = (appState.odoKm * factor).toFixed(1);
-
-            const activeTrip = appState.activeTripTab === 'A' ? appState.tripA : appState.tripB;
-            document.getElementById('trip-tab-btn').innerText = `TRIP ${appState.activeTripTab}`;
-            document.getElementById('trip-distance').innerText = (activeTrip.distKm * factor).toFixed(2);
-            document.getElementById('max-speed').innerText = (activeTrip.maxSpeedKmh * factor).toFixed(1);
-
-            if (activeTrip.timeSec > 0) {
-                const avgKmh = (activeTrip.distKm / (activeTrip.timeSec / 3600));
-                document.getElementById('avg-speed').innerText = (avgKmh * factor).toFixed(1);
-            } else {
-                document.getElementById('avg-speed').innerText = "0.0";
-            }
-
-            renderRideHistory();
-        }
-
-        function calculateDistanceKm(lat1, lon1, lat2, lon2) {
-            const R = 6371;
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLon = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        }
-
-        function updateSpeedometer(speedKmh) {
-            currentSpeedKmh = Math.max(0, speedKmh);
-            const displaySpeed = appState.units === 'km/h' ? currentSpeedKmh : (currentSpeedKmh * 0.621371);
-            document.getElementById('speed-display').innerText = Math.round(displaySpeed);
-
-            const activeTrip = appState.activeTripTab === 'A' ? appState.tripA : appState.tripB;
-            if (currentSpeedKmh > activeTrip.maxSpeedKmh) {
-                activeTrip.maxSpeedKmh = currentSpeedKmh;
-                saveState();
-                renderUIFromState();
-            }
-
-            const percentage = Math.min(currentSpeedKmh / 60, 1.0);
-            document.getElementById('tacho-arc').setAttribute('stroke-dasharray', `${535 * percentage} 600`);
-        }
-
-        function startGpsTracking() {
-            if ('geolocation' in navigator) {
-                document.getElementById('gps-status').innerText = 'SEARCHING';
-                document.getElementById('gps-status').style.color = '#eab308';
-
-                watchId = navigator.geolocation.watchPosition(
-                    (position) => {
-                        document.getElementById('gps-status').innerText = 'ACTIVE';
-                        document.getElementById('gps-status').style.color = '#22c55e';
-                        document.getElementById('gps-icon').style.fill = '#ff6600';
-
-                        const coords = position.coords;
-                        document.getElementById('gps-acc').innerText = `${Math.round(coords.accuracy)}`;
-
-                        let speedKmh = coords.speed ? (coords.speed * 3.6) : 0;
-                        updateSpeedometer(speedKmh);
-
-                        if (lastPosition && isRiding) {
-                            const deltaKm = calculateDistanceKm(lastPosition.latitude, lastPosition.longitude, coords.latitude, coords.longitude);
-                            if (deltaKm > 0.002) {
-                                appState.odoKm += deltaKm;
-                                if (appState.activeTripTab === 'A') appState.tripA.distKm += deltaKm;
-                                else appState.tripB.distKm += deltaKm;
-                                saveState();
-                                renderUIFromState();
-                            }
-                        }
-                        lastPosition = coords;
-                    },
-                    (error) => {
-                        document.getElementById('gps-status').innerText = 'DENIED';
-                        document.getElementById('gps-status').style.color = '#ef4444';
-                        alert('GPS Access Error: Please ensure Location Services are enabled for Safari in iOS Settings.');
-                    },
-                    { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
-                );
-            } else {
-                alert('Geolocation is not supported by your browser.');
-            }
-        }
-
-        function toggleRide() {
-            isRiding = !isRiding;
-            const btn = document.getElementById('btn-toggle-ride');
-            const statusDiv = document.getElementById('ride-status');
-
-            if (isRiding) {
-                btn.innerText = '⏸';
-                statusDiv.innerText = 'RIDING';
-                statusDiv.style.color = '#22c55e';
-
-                if (!isSimulating) startGpsTracking();
-
-                timerInterval = setInterval(() => {
-                    activeRideTimeSec++;
-                    if (appState.activeTripTab === 'A') appState.tripA.timeSec++;
-                    else appState.tripB.timeSec++;
-
-                    const hrs = String(Math.floor(activeRideTimeSec / 3600)).padStart(2, '0');
-                    const mins = String(Math.floor((activeRideTimeSec % 3600) / 60)).padStart(2, '0');
-                    const secs = String(activeRideTimeSec % 60).padStart(2, '0');
-                    document.getElementById('ride-time').innerText = `${hrs}:${mins}:${secs}`;
-
-                    if (activeRideTimeSec % 5 === 0) saveState();
-                    renderUIFromState();
-                }, 1000);
-            } else {
-                btn.innerText = '▶';
-                statusDiv.innerText = 'PAUSED';
-                statusDiv.style.color = '#ef4444';
-                clearInterval(timerInterval);
-                updateSpeedometer(0);
-                saveState();
-            }
-        }
-
-        function toggleTripTab() {
-            appState.activeTripTab = appState.activeTripTab === 'A' ? 'B' : 'A';
-            const activeTrip = appState.activeTripTab === 'A' ? appState.tripA : appState.tripB;
-            activeRideTimeSec = activeTrip.timeSec;
-            saveState();
-            renderUIFromState();
-        }
-
-        function resetActiveTrip() {
-            if (appState.activeTripTab === 'A') appState.tripA = { distKm: 0.0, timeSec: 0, maxSpeedKmh: 0.0 };
-            else appState.tripB = { distKm: 0.0, timeSec: 0, maxSpeedKmh: 0.0 };
-            activeRideTimeSec = 0;
-            document.getElementById('ride-time').innerText = "00:00:00";
-            saveState();
-            renderUIFromState();
-        }
-
-        function saveCurrentRide() {
-            const activeTrip = appState.activeTripTab === 'A' ? appState.tripA : appState.tripB;
-            if (activeTrip.distKm <= 0) return;
-
-            appState.rideLogs.unshift({
-                id: Date.now(),
-                date: new Date().toLocaleDateString(),
-                distKm: activeTrip.distKm,
-                maxSpeedKmh: activeTrip.maxSpeedKmh
-            });
-            saveState();
-            renderRideHistory();
-        }
-
-        function renderRideHistory() {
-            const list = document.getElementById('ride-history-list');
-            if (appState.rideLogs.length === 0) {
-                list.innerHTML = '<div style="color:#71717a; text-align:center;">No saved rides</div>';
-                return;
-            }
-            list.innerHTML = appState.rideLogs.map(r => `
-                <div style="display:flex; justify-content:space-between; margin-bottom:4px; border-bottom:1px solid #27272a; padding-bottom:2px;">
-                    <span>${r.date}</span>
-                    <span style="color:#ff6600;">${r.distKm.toFixed(2)} km</span>
-                </div>
-            `).join('');
-        }
-
-        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
-        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
-
-        function setUnits(unit) {
-            appState.units = unit;
-            saveState();
-            renderUIFromState();
-        }
-
-        function toggleThemeMode() {
-            appState.theme = appState.theme === 'TRACK' ? 'STREET' : 'TRACK';
-            saveState();
-            renderUIFromState();
-        }
-
-        function toggleSimulation() {
-            isSimulating = !isSimulating;
-            const btn = document.getElementById('btn-sim-toggle');
-
-            if (isSimulating) {
-                btn.innerText = 'ON';
-                let speed = 0;
-                simInterval = setInterval(() => {
-                    if (!isRiding) return;
-                    speed = (speed + 2) % 65;
-                    updateSpeedometer(speed);
-                    appState.odoKm += (speed / 3600);
-                    renderUIFromState();
-                }, 300);
-            } else {
-                btn.innerText = 'OFF';
-                clearInterval(simInterval);
-                updateSpeedometer(0);
-            }
-        }
-
-        document.getElementById('btn-start-app').addEventListener('click', function() {
-            document.getElementById('start-overlay').classList.add('hidden');
-            startGpsTracking();
-        });
-
-        window.addEventListener('load', () => {
-            loadSavedState();
-            setInterval(() => {
-                const now = new Date();
-                document.getElementById('clock').innerText = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-            }, 1000);
-        });
-    </script>
+  /* не гасить экран */
+  addEventListener('click',function(){try{navigator.wakeLock&&navigator.wakeLock.request('screen')}catch(e){}},{once:true});
+})();
+</script>
 </body>
 </html>
