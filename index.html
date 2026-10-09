@@ -2,13 +2,13 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>KTM 1290 Dash</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bezel:#000;--screen:#16263f;--panel:#b9bcbd;--ink:#1c3354;--white:#fff;--red:#d8334a;--yel:#e8c21a;--logo:#3f6fa3;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-html,body{height:100%;margin:0;background:var(--screen);overflow:hidden;-webkit-user-select:none;user-select:none}
+html,body{height:100%;margin:0;background:var(--screen);touch-action:manipulation;-webkit-touch-callout:none;overflow:hidden;-webkit-user-select:none;user-select:none}
 #stage{position:absolute;left:50%;top:50%;width:667px;height:375px;background:var(--screen);overflow:hidden;transform-origin:center}
 svg{width:667px;height:375px;display:block;font-family:'Rajdhani','Arial Narrow',sans-serif;font-weight:600}
 text{fill:var(--ink)}
@@ -20,10 +20,12 @@ text{fill:var(--ink)}
   <!-- светлая панель -->
   <path d="M26,338 L26,214 Q26,190 44,174 L128,88 Q146,70 172,70 L641,70 L641,338 Z" fill="var(--panel)"/>
   <!-- тахометр -->
+  <defs><clipPath id="outer"><path d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122 L641,70 L172,70 Q146,70 128,88 L44,174 Q26,190 26,214 Z"/></clipPath></defs>
+  <g clip-path="url(#outer)"><path id="orange" fill="none" stroke="#ff7a00" stroke-width="200" stroke-linejoin="round" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/></g>
   <path id="track" fill="none" stroke="#000" stroke-width="2.5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
   <path id="redTrack" fill="none" stroke="var(--red)" stroke-width="2.5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
-  <path id="lit" fill="none" stroke="#000" stroke-width="5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
-  <path id="litRed" fill="none" stroke="var(--red)" stroke-width="5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
+  
+  
   <g id="labels" font-size="22" text-anchor="middle"></g>
   <text x="636" y="116" font-size="11" text-anchor="end">x10 km/h</text>
 
@@ -70,10 +72,10 @@ text{fill:var(--ink)}
   addEventListener('resize',fit); fit();
 
   /* шкала тахометра */
-  var lit=$('lit'),litRed=$('litRed'),redTrack=$('redTrack'),track=$('track');
+  var orange=$('orange'),redTrack=$('redTrack'),track=$('track');
   var L=track.getTotalLength(), redStart=L*RED/MAX;
   redTrack.style.strokeDasharray='0 '+redStart+' '+(L-redStart)+' '+L;
-  var g=$('labels');
+  var g=$('labels'),labs=[];
   for(var i=1;i<=6;i++){
     var len=L*i/6, pt=track.getPointAtLength(Math.min(len,L-1));
     var a=track.getPointAtLength(Math.max(len-2,0)), b=track.getPointAtLength(Math.min(len+2,L));
@@ -81,7 +83,7 @@ text{fill:var(--ink)}
     var nx=dy/m, ny=-dx/m, off=26;
     var t=document.createElementNS('http://www.w3.org/2000/svg','text');
     t.setAttribute('x',Math.min(pt.x+nx*off,628)); t.setAttribute('y',pt.y+ny*off+8);
-    t.textContent=i; if(i*10>=RED) t.style.fill='var(--red)';
+    t.textContent=i; t._i=i; t.style.fill=(i*10>=RED?'var(--red)':'#000'); labs.push(t);
     g.appendChild(t);
   }
 
@@ -89,8 +91,11 @@ text{fill:var(--ink)}
   function draw(){
     shown += (target-shown)*0.18;
     var v=Math.max(0,Math.min(shown,MAX)), len=L*v/MAX;
-    lit.style.strokeDasharray=Math.min(len,redStart)+' '+L;
-    litRed.style.strokeDasharray = len>redStart ? '0 '+redStart+' '+(len-redStart)+' '+L : '0 '+L;
+    var blink=v>=RED && Math.floor(Date.now()/130)%2===1;
+    orange.style.strokeDasharray=len+' '+L;
+    orange.style.visibility=(blink||len<1)?'hidden':'visible';
+    for(var j=0;j<labs.length;j++){var q=labs[j],on=!blink&&v>=q._i*10;
+      if(q._on!==on){q._on=on;q.style.fill=on?'#fff':(q._i*10>=RED?'var(--red)':'#000');}}
     requestAnimationFrame(draw);
   }
   draw();
@@ -100,7 +105,9 @@ text{fill:var(--ink)}
   tick(); setInterval(tick,5000);
 
   /* скорость */
+  var lastKmh=null,sweeping=false;
   function setSpeed(kmh){
+    lastKmh=kmh; if(sweeping) return;
     if(kmh==null){ $('spd').style.visibility='hidden'; $('noGps').setAttribute('visibility','visible'); target=0; return; }
     $('noGps').setAttribute('visibility','hidden'); $('spd').style.visibility='visible';
     var v=kmh<2?0:Math.round(kmh);
@@ -141,12 +148,42 @@ text{fill:var(--ink)}
   }
   try{var s=localStorage.getItem('oil'); if(s!==null) showTemp(parseFloat(s));}catch(e){}
   /* ручной ввод, если интернет/API недоступен: тап по OIL */
+  var promptT=0,noPromptUntil=0;
   $('oilBtn').addEventListener('click',function(){
+    if(Date.now()<noPromptUntil) return;
+    clearTimeout(promptT); promptT=setTimeout(askTemp,650);
+  });
+  function askTemp(){
     var v=prompt('Температура, °C:');
     if(v===null||v.trim()==='') return;
     var n=parseFloat(v.replace(',','.')); if(isNaN(n)) return;
     manual=true; showTemp(n); try{localStorage.setItem('oil',n)}catch(e){}
+  }
+
+  /* удержание экрана 1 с: «инициализация» — стрелка до 60 и обратно */
+  var holdT=0,holdFired=false;
+  addEventListener('pointerdown',function(){
+    clearTimeout(holdT);
+    holdT=setTimeout(function(){holdFired=true;clearTimeout(promptT);sweep();},1000);
   });
+  function endHold(){clearTimeout(holdT); if(holdFired){holdFired=false;noPromptUntil=Date.now()+400;}}
+  addEventListener('pointerup',endHold);
+  addEventListener('pointercancel',endHold);
+  addEventListener('contextmenu',function(e){e.preventDefault()});
+  addEventListener('gesturestart',function(e){e.preventDefault()});
+  function sweep(){
+    if(sweeping) return; sweeping=true;
+    var t0=Date.now(), UP=1100, HOLD=200, DOWN=1400;
+    var iv=setInterval(function(){
+      var t=Date.now()-t0, v, k;
+      if(t<UP){k=t/UP; v=MAX*(1-(1-k)*(1-k));}
+      else if(t<UP+HOLD){v=MAX;}
+      else if(t<UP+HOLD+DOWN){k=(t-UP-HOLD)/DOWN; v=MAX*(1-k*k);}
+      else { clearInterval(iv); sweeping=false; setSpeed(lastKmh); return; }
+      $('noGps').setAttribute('visibility','hidden'); $('spd').style.visibility='visible';
+      $('spd').textContent=Math.round(v); target=v;
+    },40);
+  }
 
   /* не гасить экран */
   addEventListener('click',function(){try{navigator.wakeLock&&navigator.wakeLock.request('screen')}catch(e){}},{once:true});
