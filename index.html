@@ -17,9 +17,9 @@ text{fill:var(--ink)}
 <body>
 <div id="stage">
 <svg viewBox="0 0 667 375" xmlns="http://www.w3.org/2000/svg">
-  <!-- ÑÐ²ÐµÑ‚Ð»Ð°Ñ Ð¿Ð°Ð½ÐµÐ»ÑŒ -->
+  <!-- светлая панель -->
   <path d="M26,338 L26,214 Q26,190 44,174 L128,88 Q146,70 172,70 L641,70 L641,338 Z" fill="var(--panel)"/>
-  <!-- Ñ‚Ð°Ñ…Ð¾Ð¼ÐµÑ‚Ñ€ -->
+  <!-- тахометр -->
   <defs><clipPath id="outer"><path d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122 L641,70 L172,70 Q146,70 128,88 L44,174 Q26,190 26,214 Z"/></clipPath></defs>
   <g clip-path="url(#outer)"><path id="orange" fill="none" stroke="#ff7a00" stroke-width="200" stroke-linejoin="round" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/></g>
   <path id="track" fill="none" stroke="#000" stroke-width="2.5" d="M26,338 L62,300 L62,222 Q62,210 71,202 L152,134 Q168,122 190,122 L641,122"/>
@@ -29,12 +29,12 @@ text{fill:var(--ink)}
   <g id="labels" font-size="22" text-anchor="middle"></g>
   <text x="636" y="116" font-size="11" text-anchor="end">x10 km/h</text>
 
-  <!-- Ð¿ÐµÑ€ÐµÐ´Ð°Ñ‡Ð° -->
+  <!-- передача -->
   <text x="26" y="104" font-size="104" font-weight="700" style="fill:var(--white)">3</text>
   <text id="clock" x="100" y="62" font-size="22" style="fill:var(--white)">--:--</text>
 
 
-  <!-- ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ -->
+  <!-- скорость -->
   <text id="spd" x="618" y="262" font-size="140" font-weight="700" text-anchor="end">0</text>
   <g id="noGps" transform="translate(528,160)" visibility="hidden">
     <rect x="4" y="4" width="92" height="104" rx="20" fill="none" stroke="var(--ink)" stroke-width="9"/>
@@ -42,7 +42,7 @@ text{fill:var(--ink)}
   </g>
   <text x="618" y="288" font-size="18" text-anchor="end">km/h</text>
 
-  <!-- Ð½Ð¸Ð¶Ð½ÑÑ ÑÑ‚Ñ€Ð¾ÐºÐ° -->
+  <!-- нижняя строка -->
   <rect x="76" y="304" width="104" height="30" fill="none" stroke="var(--ink)" stroke-width="1.5"/>
   <text x="128" y="328" font-size="24" text-anchor="middle" letter-spacing="1">TRACK</text>
   <line x1="204" y1="306" x2="204" y2="334" stroke="var(--red)" stroke-width="2"/>
@@ -51,20 +51,20 @@ text{fill:var(--ink)}
   <g id="oilBtn" style="cursor:pointer">
     <rect x="456" y="300" width="180" height="38" fill="transparent"/>
     <text x="472" y="326" font-size="16">TEMP</text>
-    <text id="oil" x="526" y="328" font-size="28" font-weight="700">--Â°C</text>
+    <text id="oil" x="526" y="328" font-size="28" font-weight="700">--°C</text>
   </g>
 
-  <!-- Ð»Ð¾Ð³Ð¾ -->
+  <!-- лого -->
   <text x="333" y="365" font-size="26" font-weight="700" text-anchor="middle" letter-spacing="3" style="fill:var(--logo);font-style:italic">KTM</text>
 </svg>
 </div>
 
 <script>
 (function(){
-  var MAX = 60, RED = 35;           // ÐºÐ¼/Ñ‡: Ð¿Ð¾Ð»Ð½Ð°Ñ ÑˆÐºÐ°Ð»Ð° Ð¸ Ð½Ð°Ñ‡Ð°Ð»Ð¾ ÐºÑ€Ð°ÑÐ½Ð¾Ð¹ Ð·Ð¾Ð½Ñ‹
+  var MAX = 60, RED = 35;           // км/ч: полная шкала и начало красной зоны
   var $ = function(i){return document.getElementById(i)};
 
-  /* Ð¼Ð°ÑÑˆÑ‚Ð°Ð± Ð¿Ð¾Ð´ iPhone 7 (667x375), Ð² Ð¿Ð¾Ñ€Ñ‚Ñ€ÐµÑ‚Ðµ â€” Ð¿Ð¾Ð²Ð¾Ñ€Ð¾Ñ‚ */
+  /* масштаб под iPhone 7 (667x375), в портрете — поворот */
   var a0=null;
   function ang(){var a=(screen.orientation&&typeof screen.orientation.angle==='number')?screen.orientation.angle:(typeof window.orientation==='number'?window.orientation:0);return ((a%360)+360)%360}
   function fit(){
@@ -78,7 +78,7 @@ text{fill:var(--ink)}
   addEventListener('orientationchange',function(){setTimeout(fit,200);setTimeout(fit,800)});
   fit(); setInterval(fit,1500);
 
-  /* ÑˆÐºÐ°Ð»Ð° Ñ‚Ð°Ñ…Ð¾Ð¼ÐµÑ‚Ñ€Ð° */
+  /* шкала тахометра */
   var orange=$('orange'),redTrack=$('redTrack'),track=$('track');
   var L=track.getTotalLength(), redStart=L*RED/MAX;
   redTrack.style.strokeDasharray='0 '+redStart+' '+(L-redStart)+' '+L;
@@ -107,11 +107,11 @@ text{fill:var(--ink)}
   }
   draw();
 
-  /* Ñ‡Ð°ÑÑ‹ */
+  /* часы */
   function tick(){var d=new Date();$('clock').textContent=('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)}
   tick(); setInterval(tick,5000);
 
-  /* ÑÐºÐ¾Ñ€Ð¾ÑÑ‚ÑŒ */
+  /* скорость */
   var lastKmh=null,sweeping=false;
   function setSpeed(kmh){
     lastKmh=kmh; if(sweeping) return;
@@ -142,9 +142,9 @@ text{fill:var(--ink)}
     },function(){setSpeed(null)},{enableHighAccuracy:true,maximumAge:0,timeout:15000});
   }
 
-  /* Ñ‚ÐµÐ¼Ð¿ÐµÑ€Ð°Ñ‚ÑƒÑ€Ð° Ð¼Ð°ÑÐ»Ð° = Ñ‚ÐµÐ¼Ð¿ÐµÑ€Ð°Ñ‚ÑƒÑ€Ð° Ð²Ð¾Ð·Ð´ÑƒÑ…Ð° Ð² Ð³Ð¾Ñ€Ð¾Ð´Ðµ (Open-Meteo) */
+  /* температура масла = температура воздуха в городе (Open-Meteo) */
   var tempAt=0, manual=false;
-  function showTemp(t){$('oil').textContent=Math.round(t)+'Â°C'}
+  function showTemp(t){$('oil').textContent=Math.round(t)+'°C'}
   function getTemp(la,lo){
     tempAt=Date.now();
     if(manual) return;
@@ -154,20 +154,20 @@ text{fill:var(--ink)}
       .catch(function(){});
   }
   try{var s=localStorage.getItem('oil'); if(s!==null) showTemp(parseFloat(s));}catch(e){}
-  /* Ñ€ÑƒÑ‡Ð½Ð¾Ð¹ Ð²Ð²Ð¾Ð´, ÐµÑÐ»Ð¸ Ð¸Ð½Ñ‚ÐµÑ€Ð½ÐµÑ‚/API Ð½ÐµÐ´Ð¾ÑÑ‚ÑƒÐ¿ÐµÐ½: Ñ‚Ð°Ð¿ Ð¿Ð¾ OIL */
+  /* ручной ввод, если интернет/API недоступен: тап по OIL */
   var promptT=0,noPromptUntil=0;
   $('oilBtn').addEventListener('click',function(){
     if(Date.now()<noPromptUntil) return;
     clearTimeout(promptT); promptT=setTimeout(askTemp,650);
   });
   function askTemp(){
-    var v=prompt('Ð¢ÐµÐ¼Ð¿ÐµÑ€Ð°Ñ‚ÑƒÑ€Ð°, Â°C:');
+    var v=prompt('Температура, °C:');
     if(v===null||v.trim()==='') return;
     var n=parseFloat(v.replace(',','.')); if(isNaN(n)) return;
     manual=true; showTemp(n); try{localStorage.setItem('oil',n)}catch(e){}
   }
 
-  /* ÑƒÐ´ÐµÑ€Ð¶Ð°Ð½Ð¸Ðµ ÑÐºÑ€Ð°Ð½Ð° 1 Ñ: Â«Ð¸Ð½Ð¸Ñ†Ð¸Ð°Ð»Ð¸Ð·Ð°Ñ†Ð¸ÑÂ» â€” ÑÑ‚Ñ€ÐµÐ»ÐºÐ° Ð´Ð¾ 60 Ð¸ Ð¾Ð±Ñ€Ð°Ñ‚Ð½Ð¾ */
+  /* удержание экрана 1 с: «инициализация» — стрелка до 60 и обратно */
   var holdT=0,holdFired=false;
   addEventListener('pointerdown',function(){
     clearTimeout(holdT);
@@ -192,7 +192,7 @@ text{fill:var(--ink)}
     },40);
   }
 
-  /* Ð½Ðµ Ð³Ð°ÑÐ¸Ñ‚ÑŒ ÑÐºÑ€Ð°Ð½ */
+  /* не гасить экран */
   addEventListener('click',function(){try{navigator.wakeLock&&navigator.wakeLock.request('screen')}catch(e){}},{once:true});
 })();
 </script>
